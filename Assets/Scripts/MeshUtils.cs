@@ -5,8 +5,10 @@ using VertexData = System.Tuple<UnityEngine.Vector3, UnityEngine.Vector3, UnityE
 
 public static class MeshUtils {
     public enum BlockType {
-        GRASSTOP, GRASSSIDE, DIRT, WATER, STONE, SAND
+        GRASSTOP, GRASSSIDE, DIRT, WATER, STONE, SAND, AIR
     };
+
+    public enum BlockSide { BOTTOM, TOP, LEFT, RIGHT, FRONT, BACK };
 
     public static Vector2[,] blockUVs = {
         /*GRASSTOP*/ {  new Vector2(0.125f, 0.375f), new Vector2(0.1875f,0.375f),
@@ -23,6 +25,17 @@ public static class MeshUtils {
                         new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)}
     };
 
+    public static float fBM(float x, float z, int octaves, float scale, float heightScale, float heightOffset)
+    {
+        float total = 0;
+        float frequency = 1;
+        for (int i = 0; i < octaves; i++)
+        {
+            total += Mathf.PerlinNoise(x * scale * frequency, z * scale * frequency) * heightScale;
+            frequency *= 2;
+        }
+        return total + heightOffset;
+    }
 
     public static Mesh MergeMeshes(Mesh[] meshes) {
         Mesh mesh = new Mesh();
